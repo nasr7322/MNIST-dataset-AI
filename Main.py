@@ -16,14 +16,17 @@ epochs = 10
 learning_rate = 0.01
 input_size = 28 * 28 # the image dimentions are 28x28
 num_classes = 10 # the number of digits (0-9)
-use_l2_regularization = True
+use_l2_regularization = False
 criterion = nn.CrossEntropyLoss()
+weight_decay = 0.01
 
 print("MNIST Digit Recognition with Softmax Regression and Feedforward Neural Network\n")
 print(f"Batch Size: {batch_sizes}")
 print(f"Epochs: {epochs}")
 print(f"Learning Rate: {learning_rate}")
 print(f"L2 Regularization: {use_l2_regularization}")
+if use_l2_regularization:
+    print(f"Weight Decay: {weight_decay}")
 print(f"Criterion: {criterion}")
 
 # 2. Data Preparation
@@ -61,7 +64,7 @@ class SoftmaxRegression(nn.Module):
 # Initialize model, optimizer, and loss function
 model = SoftmaxRegression(input_size, num_classes)
 if use_l2_regularization:
-    optimizer = optim.SGD(model.parameters(), lr=learning_rate, weight_decay=0.01)
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 else:
     optimizer = optim.SGD(model.parameters(), lr=learning_rate)
 
@@ -180,7 +183,10 @@ class FeedforwardNN(nn.Module):
 # Initialize Feedforward Neural Network
 hidden_sizes = [128, 64]
 ffnn_model = FeedforwardNN(input_size, hidden_sizes, num_classes)
-optimizer = optim.SGD(ffnn_model.parameters(), lr=learning_rate)
+if use_l2_regularization:
+    optimizer = optim.SGD(ffnn_model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+else:
+    optimizer = optim.SGD(ffnn_model.parameters(), lr=learning_rate)
 
 # Train and Validate Feedforward Neural Network
 print("\nFeedforward NN Training:")
