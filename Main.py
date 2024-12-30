@@ -2,26 +2,24 @@ import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
 from torchvision import datasets, transforms
-
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, classification_report
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# 0. Set Variables
+# 0. Set Variables to change
 random_data_split_seed = 123456789
 batch_sizes = 64
 epochs = 10
 learning_rate = 0.01
 input_size = 28 * 28 # the image dimentions are 28x28
 num_classes = 10 # the number of digits (0-9)
+use_l2_regularization = True
+criterion = nn.CrossEntropyLoss()
 
 # 2. Data Preparation
-
 # Define transformation variable to apply to images
 transform = transforms.Compose([
     transforms.ToTensor(), # Convert image to tensor and set range between 0 and 1
@@ -56,8 +54,11 @@ class SoftmaxRegression(nn.Module):
 
 # Initialize model, optimizer, and loss function
 model = SoftmaxRegression(input_size, num_classes)
-optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-criterion = nn.CrossEntropyLoss()
+if use_l2_regularization:
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, weight_decay=0.01)
+else:
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate)
+
 
 # 4. Training and Validation Loop
 def train_and_validate(model, train_loader, val_loader, epochs):
@@ -132,25 +133,21 @@ print(f"Training Time: {training_time:.2f} seconds")
 def plot_metrics(train_losses, val_losses, val_accuracies, figure_name):
     # Create a figure with subplots
     fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-
     # Plot losses
     axes[0].plot(train_losses, label='Train Loss')
     axes[0].plot(val_losses, label='Validation Loss')
     axes[0].set_title('Losses')
     axes[0].legend()
-
     # Plot accuracies
     axes[1].plot(val_accuracies, label='Validation Accuracy')
     axes[1].set_title('Validation Accuracy')
     axes[1].legend()
-
     # Adjust layout
     plt.tight_layout(pad=1)
     # Adjust font size
     for ax in axes.flat:
         for label in ax.get_xticklabels() + ax.get_yticklabels():
             label.set_fontsize(8)
-
     # Save the figure
     plt.savefig(figure_name)
     plt.show()
@@ -158,6 +155,7 @@ def plot_metrics(train_losses, val_losses, val_accuracies, figure_name):
 plot_metrics(train_losses, val_losses, val_accuracies, f'Softmax Regression Metrics.{learning_rate}.{batch_sizes}.png')
 
 # BONUS: Feedforward Neural Network
+
 class FeedforwardNN(nn.Module):
     def __init__(self, input_size, hidden_sizes, output_size):
         super(FeedforwardNN, self).__init__()
