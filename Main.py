@@ -19,6 +19,13 @@ num_classes = 10 # the number of digits (0-9)
 use_l2_regularization = True
 criterion = nn.CrossEntropyLoss()
 
+print("MNIST Digit Recognition with Softmax Regression and Feedforward Neural Network\n")
+print(f"Batch Size: {batch_sizes}")
+print(f"Epochs: {epochs}")
+print(f"Learning Rate: {learning_rate}")
+print(f"L2 Regularization: {use_l2_regularization}")
+print(f"Criterion: {criterion}")
+
 # 2. Data Preparation
 # Define transformation variable to apply to images
 transform = transforms.Compose([
@@ -131,23 +138,26 @@ print(f"\nAccuracy: {report['accuracy']:.4f}")
 print(f"Training Time: {training_time:.2f} seconds")
 
 def plot_metrics(train_losses, val_losses, val_accuracies, figure_name):
-    # Create a figure with subplots
     fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    
     # Plot losses
     axes[0].plot(train_losses, label='Train Loss')
     axes[0].plot(val_losses, label='Validation Loss')
     axes[0].set_title('Losses')
     axes[0].legend()
+    
     # Plot accuracies
     axes[1].plot(val_accuracies, label='Validation Accuracy')
     axes[1].set_title('Validation Accuracy')
     axes[1].legend()
+    
     # Adjust layout
     plt.tight_layout(pad=1)
     # Adjust font size
     for ax in axes.flat:
         for label in ax.get_xticklabels() + ax.get_yticklabels():
             label.set_fontsize(8)
+            
     # Save the figure
     plt.savefig(figure_name)
     plt.show()
@@ -155,7 +165,6 @@ def plot_metrics(train_losses, val_losses, val_accuracies, figure_name):
 plot_metrics(train_losses, val_losses, val_accuracies, f'Softmax Regression Metrics.{learning_rate}.{batch_sizes}.png')
 
 # BONUS: Feedforward Neural Network
-
 class FeedforwardNN(nn.Module):
     def __init__(self, input_size, hidden_sizes, output_size):
         super(FeedforwardNN, self).__init__()
