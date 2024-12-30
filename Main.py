@@ -49,7 +49,6 @@ train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_sizes, s
 val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_sizes, shuffle=False)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_sizes, shuffle=False)
 
-
 # 3. Define Softmax Regression Model
 class SoftmaxRegression(nn.Module):
     def __init__(self, input_size, num_classes):
@@ -65,7 +64,6 @@ if use_l2_regularization:
     optimizer = optim.SGD(model.parameters(), lr=learning_rate, weight_decay=0.01)
 else:
     optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-
 
 # 4. Training and Validation Loop
 def train_and_validate(model, train_loader, val_loader, epochs):
@@ -216,4 +214,3 @@ print(f"\nAccuracy: {report['accuracy']:.4f}")
 print(f"Training Time: {training_time:.2f} seconds")
 
 plot_metrics(train_losses, val_losses, val_accuracies, f'Feedforward NN Metrics.{learning_rate}.{batch_sizes}.png')
-
